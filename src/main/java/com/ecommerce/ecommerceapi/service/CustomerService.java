@@ -3,8 +3,11 @@ package com.ecommerce.ecommerceapi.service;
 import com.ecommerce.ecommerceapi.constant.APIEndpoints;
 import com.ecommerce.ecommerceapi.dto.APIResponse;
 import com.ecommerce.ecommerceapi.dto.CustomerRegistrationDTO;
+import com.ecommerce.ecommerceapi.exception.IllegalArgumentException;
+import com.ecommerce.ecommerceapi.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -20,40 +23,22 @@ public class CustomerService {
 
     private final WebClient webClient;
 
-    public Mono<APIResponse> registerCustomer(CustomerRegistrationDTO customerRegistrationDTO) {
+    public Mono<Void> registerCustomer(CustomerRegistrationDTO customerRegistrationDTO) {
         System.err.println(customerRegistrationDTO.toString());
 
-        Mono<APIResponse> responseMono = webClient
+        Mono<Void> responseMono = webClient
                 .post()
                 .uri(APIEndpoints.baseUrl + APIEndpoints.customerShop)
                 .bodyValue(customerRegistrationDTO)
-                .exchangeToMono(response -> {
-                    HttpStatusCode status = response.statusCode();
-                    if (status.is2xxSuccessful()) {
-                        // Handle successful response
-                        System.err.println(response.statusCode());
-                        return response.bodyToMono(ClientResponse.class)
-                                .map(res -> {
-                                    return APIResponse.builder()
-                                            .message("successfully registered")
-                                            .statusCode(response.statusCode().value())
-                                            .zonedDateTime(ZonedDateTime.now())
-                                            .build();
-                                });
-                    } else {
-                        // Handle error response
-                        return response.bodyToMono(String.class)
-                                .flatMap(errorBody -> {
-                                    // Handle error body and return appropriate error response
-                                    System.err.println("Error body: " + errorBody);
-                                    return Mono.error(new RuntimeException("API request failed with status: " + status));
-                                });
-                    }
+                .retrieve()
+                .bodyToMono(Void.class)
+                .doOnError(error -> {
+                    throw new IllegalArgumentException(error.getMessage());
                 });
 
 
-        log.info("res to string :=> " + responseMono.toString());
-        log.info("res -> " + responseMono.log());
+        log.info("res to string :=> " + responseMono);
+
         return responseMono;
     }
 }

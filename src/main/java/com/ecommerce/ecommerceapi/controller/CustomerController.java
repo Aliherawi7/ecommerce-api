@@ -17,7 +17,7 @@ public class CustomerController {
 
 
     @PostMapping
-    public Mono<APIResponse> registerCustomer(@RequestBody CustomerRegistrationDTO customerRegistrationDTO){
+    public Mono<Void> registerCustomer(@RequestBody CustomerRegistrationDTO customerRegistrationDTO){
         return customerService.registerCustomer(customerRegistrationDTO);
     }
 
