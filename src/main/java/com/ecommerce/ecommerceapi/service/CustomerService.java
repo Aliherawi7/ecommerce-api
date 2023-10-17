@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
 
+import static java.rmi.server.LogStream.log;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,22 +25,25 @@ public class CustomerService {
 
     private final WebClient webClient;
 
-    public Mono<Void> registerCustomer(CustomerRegistrationDTO customerRegistrationDTO) {
+    public Mono<APIResponse> registerCustomer(CustomerRegistrationDTO customerRegistrationDTO) {
         System.err.println(customerRegistrationDTO.toString());
-
-        Mono<Void> responseMono = webClient
+        return webClient
                 .post()
-                .uri(APIEndpoints.baseUrl + APIEndpoints.customerShop)
+                .uri(APIEndpoints.customerShop)
                 .bodyValue(customerRegistrationDTO)
                 .retrieve()
-                .bodyToMono(Void.class)
+                .bodyToMono(APIResponse.class)
                 .doOnError(error -> {
+                    System.out.println(error.toString());
+                    error.printStackTrace();
                     throw new IllegalArgumentException(error.getMessage());
-                });
+                })
+                .thenReturn(APIResponse.builder()
+                        .message("Customer successfully added")
+                        .statusCode(HttpStatus.CREATED.value())
+                        .httpStatus(HttpStatus.CREATED)
+                        .zonedDateTime(ZonedDateTime.now())
+                        .build());
 
-
-        log.info("res to string :=> " + responseMono);
-
-        return responseMono;
     }
 }
