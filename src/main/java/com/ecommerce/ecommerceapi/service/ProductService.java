@@ -2,6 +2,7 @@ package com.ecommerce.ecommerceapi.service;
 
 import com.ecommerce.ecommerceapi.constant.APIEndpoints;
 import com.ecommerce.ecommerceapi.dto.ProductInfoDTO;
+import com.ecommerce.ecommerceapi.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,10 @@ public class ProductService {
         return webClient.get()
                 .uri(APIEndpoints.productInfo + productCode)
                 .retrieve()
-                .bodyToMono(ProductInfoDTO.class);
+                .bodyToMono(ProductInfoDTO.class)
+                .doOnError(error -> {
+                    throw new ResourceNotFoundException(error.getMessage());
+                });
     }
 
 
