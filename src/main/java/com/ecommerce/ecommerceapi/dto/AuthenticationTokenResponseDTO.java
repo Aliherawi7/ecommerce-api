@@ -3,8 +3,8 @@ package com.ecommerce.ecommerceapi.dto;
 import lombok.Builder;
 
 @Builder
-public record AdminTokenResponseDTO(
+public record AuthenticationTokenResponseDTO(
         String token,
-        String adminUser
+        String customer
 ) {
 }

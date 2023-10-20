@@ -16,7 +16,7 @@ public class WebClientConfiguration {
     public WebClient webClient(){
         return WebClient
                 .builder()
-                .baseUrl(APIEndpoints.baseUrl)
+                .baseUrl(APIEndpoints.BASE_URL)
                 .filter(ExchangeFilterFunctionConfigurationForWebClient.errorHandler())
                 .defaultCookie("cookieKey", "cookieValue")
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)

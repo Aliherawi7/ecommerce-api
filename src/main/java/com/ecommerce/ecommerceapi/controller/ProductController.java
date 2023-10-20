@@ -16,12 +16,8 @@ public class ProductController {
 
     private final ProductService productService;
 
-
     @PostMapping
     public Mono<ProductInfoDTO> addProduct(@RequestBody ProductRegistrationRequestDTO productRegistrationRequestDTO, @RequestHeader("Authorization")String token){
-        System.out.println("token :=>  "+token);
-
-
         return productService.addProduct(productRegistrationRequestDTO, token);
     }
 

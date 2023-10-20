@@ -4,19 +4,14 @@ import com.ecommerce.ecommerceapi.constant.APIEndpoints;
 import com.ecommerce.ecommerceapi.dto.APIResponse;
 import com.ecommerce.ecommerceapi.dto.CustomerRegistrationDTO;
 import com.ecommerce.ecommerceapi.exception.IllegalArgumentException;
-import com.ecommerce.ecommerceapi.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.ZonedDateTime;
-
-import static java.rmi.server.LogStream.log;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +24,7 @@ public class CustomerService {
         System.err.println(customerRegistrationDTO.toString());
         return webClient
                 .post()
-                .uri(APIEndpoints.customerShop)
+                .uri(APIEndpoints.SHOP_CUSTOMERS)
                 .bodyValue(customerRegistrationDTO)
                 .retrieve()
                 .bodyToMono(APIResponse.class)
