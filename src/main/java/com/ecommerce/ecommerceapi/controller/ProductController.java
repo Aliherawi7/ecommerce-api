@@ -2,12 +2,11 @@ package com.ecommerce.ecommerceapi.controller;
 
 
 import com.ecommerce.ecommerceapi.dto.ProductInfoDTO;
+import com.ecommerce.ecommerceapi.dto.ProductRegistrationRequestDTO;
 import com.ecommerce.ecommerceapi.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -17,9 +16,20 @@ public class ProductController {
 
     private final ProductService productService;
 
+
+    @PostMapping
+    public Mono<ProductInfoDTO> addProduct(@RequestBody ProductRegistrationRequestDTO productRegistrationRequestDTO, @RequestHeader("Authorization")String token){
+        System.out.println("token :=>  "+token);
+
+
+        return productService.addProduct(productRegistrationRequestDTO, token);
+    }
+
     @GetMapping("/{code}")
     public Mono<ProductInfoDTO> getProduct(@PathVariable String code){
         return productService.getProduct(code);
     }
+
+
 
 }

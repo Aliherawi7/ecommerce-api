@@ -38,7 +38,7 @@ public class CustomerService {
                     error.printStackTrace();
                     throw new IllegalArgumentException(error.getMessage());
                 })
-                .thenReturn(APIResponse.builder()
+                .doOnSuccess(response -> APIResponse.builder()
                         .message("Customer successfully added")
                         .statusCode(HttpStatus.CREATED.value())
                         .httpStatus(HttpStatus.CREATED)

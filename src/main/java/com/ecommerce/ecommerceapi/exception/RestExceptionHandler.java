@@ -33,7 +33,29 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(InvalidInputException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidInputException(InvalidInputException invalidInputException) {
+        ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .message(invalidInputException.getMessage())
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .zonedDateTime(ZonedDateTime.now(ZoneId.of("Z")))
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidInputException(UnAuthorizedException unAuthorizedException) {
+        ErrorResponse errorResponse = ErrorResponse
+                .builder()
+                .message(unAuthorizedException.getMessage())
+                .statusCode(HttpStatus.UNAUTHORIZED.value())
+                .zonedDateTime(ZonedDateTime.now(ZoneId.of("Z")))
+                .httpStatus(HttpStatus.UNAUTHORIZED)
+                .build();
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+    }
 
 
 
