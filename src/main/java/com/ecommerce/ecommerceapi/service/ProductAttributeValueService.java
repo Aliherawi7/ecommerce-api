@@ -56,6 +56,10 @@ public class ProductAttributeValueService {
 
     public List<ProductAttributeValueResponseDTO> getProductAttributeValuesResponseDTOByAttributeCodeAndProductCode(String attributeCode, String productCode){
         return productAttributeValueRepo
-                .findAllByAttributeAndProductCode(attributeCode, productCode).stream().map(productAttributeValueToResponseDTOMapper).toList();
+                .findAllByAttributeAndProductCode(attributeCode, productCode).stream().map(item -> {
+                    ProductAttributeValueResponseDTO dto = productAttributeValueToResponseDTOMapper.apply(item);
+                    dto.setTempId("/api/v2/admin/product-attributes/" + attributeCode);
+                    return dto;
+                }).toList();
     }
 }

@@ -11,9 +11,10 @@ public class ProductAttributeValueToResponseDTOMapper implements Function<Produc
     @Override
     public ProductAttributeValueResponseDTO apply(ProductAttributeValue productAttributeValue) {
         return ProductAttributeValueResponseDTO.builder()
+                .tempType("ProductAttribute")
                 .value(productAttributeValue.getValue())
                 .id(productAttributeValue.getId())
-                .type(productAttributeValue.getType())
+                .type("ProductAttributeTranslation")
                 .attribute(productAttributeValue.getAttribute())
                 .name(productAttributeValue.getName())
                 .localeCode(productAttributeValue.getLocaleCode())
