@@ -20,6 +20,10 @@ public class APIEndpoints {
     public final static String SHOP_CUSTOMER_TOKEN = "/api/v2/shop/authentication-token";
 
 
+    /* Product Attribute */
+    public final static String PRODUCT_ATTRIBUTE = "/api/v2/admin/product-attributes";
+
+
 }
 
 

@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 contact = @Contact(
                         name = "Ali Herawi",
                         email = "aliherawi7@gmail.com",
-                        url = "https://github.com/aliherawi7"
+                        url = "https://aliherawi7.github.io/iPortfolio"
                 ),
                 description = "Api for Ecommerce application",
                 title = "Ecommerce-API Docs",

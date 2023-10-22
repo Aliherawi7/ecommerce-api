@@ -3,10 +3,11 @@ package com.ecommerce.ecommerceapi.controller;
 
 import com.ecommerce.ecommerceapi.dto.ProductInfoDTO;
 import com.ecommerce.ecommerceapi.dto.ProductRegistrationRequestDTO;
+import com.ecommerce.ecommerceapi.dto.ProductRegistrationResponseDTO;
+import com.ecommerce.ecommerceapi.service.ProductAttributeValueService;
 import com.ecommerce.ecommerceapi.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.server.ServerRequest;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -15,9 +16,14 @@ import reactor.core.publisher.Mono;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductAttributeValueService productAttributeValueService;
 
     @PostMapping
-    public Mono<ProductInfoDTO> addProduct(@RequestBody ProductRegistrationRequestDTO productRegistrationRequestDTO, @RequestHeader("Authorization")String token){
+    public Mono<ProductRegistrationResponseDTO> addProduct(@RequestBody ProductRegistrationRequestDTO productRegistrationRequestDTO, @RequestHeader("Authorization")String token){
+        System.out.println(productRegistrationRequestDTO.getProductTaxons());
+        System.out.println(productRegistrationRequestDTO.getProductAttributeValues());
+        System.out.println(productRegistrationRequestDTO.getProductAttributeValues().size());
+        productRegistrationRequestDTO.getProductAttributeValues().forEach(item -> System.out.println(item.getAttributeCode() +":"+item.getValue()));
         return productService.addProduct(productRegistrationRequestDTO, token);
     }
 
