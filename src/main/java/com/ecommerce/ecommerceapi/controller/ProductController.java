@@ -20,10 +20,6 @@ public class ProductController {
 
     @PostMapping
     public Mono<ProductRegistrationResponseDTO> addProduct(@RequestBody ProductRegistrationRequestDTO productRegistrationRequestDTO, @RequestHeader("Authorization")String token){
-        System.out.println(productRegistrationRequestDTO.getProductTaxons());
-        System.out.println(productRegistrationRequestDTO.getProductAttributeValues());
-        System.out.println(productRegistrationRequestDTO.getProductAttributeValues().size());
-        productRegistrationRequestDTO.getProductAttributeValues().forEach(item -> System.out.println(item.getAttributeCode() +":"+item.getValue()));
         return productService.addProduct(productRegistrationRequestDTO, token);
     }
 

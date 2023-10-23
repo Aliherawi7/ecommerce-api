@@ -36,11 +36,11 @@ public class ProductAttributeValueService {
                 .flatMap(productAttribute -> {
                     assert productAttribute.translations() != null;
                     ProductAttributeValue productAttributeValue = ProductAttributeValue.builder()
-                            .name(productAttribute.translations().en_US().getName())
+                            .name(productAttribute.translations().getEn_US().getName())
                             .attribute(productAttribute.code())
                             .type(productAttribute.type())
                             .productCode(productCode)
-                            .localeCode(productAttribute.translations().en_US().getLocale())
+                            .localeCode(productAttribute.translations().getEn_US().getLocale())
                             .code(productAttribute.code())
                             .value(productAttributeValueRequestDTO.getValue())
                             .build();
