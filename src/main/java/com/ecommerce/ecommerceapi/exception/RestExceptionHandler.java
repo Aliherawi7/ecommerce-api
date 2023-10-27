@@ -46,7 +46,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(UnAuthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidInputException(UnAuthorizedException unAuthorizedException) {
+    public ResponseEntity<ErrorResponse> handleUnAuthorizedException(UnAuthorizedException unAuthorizedException) {
         ErrorResponse errorResponse = ErrorResponse
                 .builder()
                 .message(unAuthorizedException.getMessage())
@@ -56,8 +56,5 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
         return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
     }
-
-
-
 
 }
