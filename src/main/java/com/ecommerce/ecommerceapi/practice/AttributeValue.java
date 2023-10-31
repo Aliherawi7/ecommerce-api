@@ -1,13 +1,13 @@
 package com.ecommerce.ecommerceapi.practice;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class AttributeValue {
     String name;
     String value;
-
-    public AttributeValue(String name, String value) {
-        this.name = name;
-        this.value = value;
-    }
 
     @Override
     public String toString() {

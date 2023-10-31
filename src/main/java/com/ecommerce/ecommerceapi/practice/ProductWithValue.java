@@ -1,35 +1,16 @@
 package com.ecommerce.ecommerceapi.practice;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
+@Getter
+@Setter
 public class ProductWithValue {
     String name;
     String productCode;
     List<AttributeValue> values;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public void setProductCode(String productCode) {
-        this.productCode = productCode;
-    }
-
-    public List<AttributeValue> getValues() {
-        return values;
-    }
-
-    public void setValues(List<AttributeValue> values) {
-        this.values = values;
-    }
 
     @Override
     public String toString() {
