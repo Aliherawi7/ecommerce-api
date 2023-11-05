@@ -5,8 +5,13 @@ import com.ecommerce.ecommerceapi.dto.ProductAttributeValueResponseDTO;
 import com.ecommerce.ecommerceapi.dto.ProductInfoDTO;
 import com.ecommerce.ecommerceapi.dto.ProductRegistrationRequestDTO;
 import com.ecommerce.ecommerceapi.dto.ProductRegistrationResponseDTO;
+import com.ecommerce.ecommerceapi.projection.ProductProjection;
+import com.ecommerce.ecommerceapi.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -20,6 +25,7 @@ import java.util.List;
 public class ProductService {
     private final WebClient webClient;
     private final ProductAttributeValueService productAttributeValueService;
+    private final ProductRepository productRepository;
 
     public Mono<ProductRegistrationResponseDTO> addProduct(ProductRegistrationRequestDTO productRegistrationRequestDTO, String request) {
         /* first store all product attribute values in db */
@@ -55,6 +61,10 @@ public class ProductService {
                 .uri(APIEndpoints.PRODUCT_INFO + productCode)
                 .retrieve()
                 .bodyToMono(ProductInfoDTO.class);
+    }
+
+    public Mono<Page<ProductProjection>> getProductProjection(Long productId, Integer pageNumber, Integer pageSize){
+        return Mono.just(productRepository.findProjectedByProductId(productId, PageRequest.of(pageNumber, pageSize)));
     }
 
 
