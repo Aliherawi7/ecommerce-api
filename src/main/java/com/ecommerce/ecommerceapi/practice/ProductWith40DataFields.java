@@ -33,5 +33,6 @@ public class ProductWith40DataFields {
     private String category;
     private Double Weight;
     private String availability;
+    
 
 }
