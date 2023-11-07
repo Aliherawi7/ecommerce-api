@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ProductAttributeValueRepo extends JpaRepository<ProductAttributeValue, Long> {
     List<ProductAttributeValue> findAllByAttributeAndProductCode(String code, String productCode);
+    List<ProductAttributeValue> findAllByProductCode(String productCode);
 }

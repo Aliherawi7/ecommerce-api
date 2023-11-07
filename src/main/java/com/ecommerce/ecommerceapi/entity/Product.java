@@ -4,8 +4,7 @@ package com.ecommerce.ecommerceapi.entity;
 import com.ecommerce.ecommerceapi.dto.ProductImage;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 import org.springframework.data.repository.cdi.Eager;
 
@@ -15,6 +14,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Product {
     @Id
     @SequenceGenerator(name = "product_sequence", sequenceName = "product_sequence", initialValue = 1)

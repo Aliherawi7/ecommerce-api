@@ -47,7 +47,7 @@ public class ProductAttributeValueService {
                     System.out.println("saving the entity");
                      productAttributeValueRepo.save(productAttributeValue);
                     return Mono.empty();
-                }).subscribe();;
+                }).subscribe();
     }
 
     public List<ProductAttributeValue> getProductAttributeValuesByAttributeCodeAndProductCode(String attributeCode, String productCode){
@@ -61,5 +61,9 @@ public class ProductAttributeValueService {
                     dto.setTempId("/api/v2/admin/product-attributes/" + attributeCode);
                     return dto;
                 }).toList();
+    }
+
+    public List<ProductAttributeValue> getProductAttributeValuesByProductId(String productId){
+        return productAttributeValueRepo.findAllByProductCode(productId);
     }
 }

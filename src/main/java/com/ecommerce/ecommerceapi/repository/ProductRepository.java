@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ProductRepository  extends JpaRepository<Product, Long> {
-    @Query("select p.name, p.code, p.type from Product p where p.id = :userId")
-    Page<ProductProjection> findProjectedByProductId(Long userId, Pageable pageable);
+    @Query("select new com.ecommerce.ecommerceapi.projection.ProductProjection(p.name, p.productId) from Product p where p.productId = :productId")
+    List<ProductProjection> findProjectedByProductId(String productId, Pageable pageable);
 
 }

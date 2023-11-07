@@ -5,13 +5,13 @@ import com.ecommerce.ecommerceapi.dto.ProductAttributeValueResponseDTO;
 import com.ecommerce.ecommerceapi.dto.ProductInfoDTO;
 import com.ecommerce.ecommerceapi.dto.ProductRegistrationRequestDTO;
 import com.ecommerce.ecommerceapi.dto.ProductRegistrationResponseDTO;
+import com.ecommerce.ecommerceapi.entity.Product;
 import com.ecommerce.ecommerceapi.projection.ProductProjection;
 import com.ecommerce.ecommerceapi.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -32,9 +32,15 @@ public class ProductService {
         productRegistrationRequestDTO
                 .getProductAttributeValues()
                 .forEach(value -> {
-                    System.out.println(value.getAttributeCode() +":"+value.getValue());
-                    productAttributeValueService.addProductAttributeValue(value,productRegistrationRequestDTO.getCode(), request);
+                    System.out.println(value.getAttributeCode() + ":" + value.getValue());
+                    productAttributeValueService.addProductAttributeValue(value, productRegistrationRequestDTO.getCode(), request);
                 });
+
+        // this is for test purpose
+        productRepository.save(Product.builder()
+                .productId(productRegistrationRequestDTO.getCode())
+                .name(productRegistrationRequestDTO.getMainTaxon())
+                .build());
 
         /* send the product information to the Sylius API */
         return webClient.post().uri(APIEndpoints.ADD_PRODUCT)
@@ -52,7 +58,6 @@ public class ProductService {
                     });
                     productRegistrationResponseDTO
                             .setProductAttributeValues(values);
-
                 });
     }
 
@@ -63,8 +68,20 @@ public class ProductService {
                 .bodyToMono(ProductInfoDTO.class);
     }
 
-    public Mono<Page<ProductProjection>> getProductProjection(Long productId, Integer pageNumber, Integer pageSize){
-        return Mono.just(productRepository.findProjectedByProductId(productId, PageRequest.of(pageNumber, pageSize)));
+    /*
+    * in this scenario we use class based sql-projection instead of interface
+    * and the reason behind this decision is that we cant set the list within interface
+    * because its already null and if we do so we will get NullPointerException
+    * */
+    public List<ProductProjection> getProductProjection(String productId, Integer pageNumber, Integer pageSize) {
+        List<ProductProjection> productProjections = productRepository
+                .findProjectedByProductId(productId, PageRequest.of(pageNumber, pageSize));
+        productProjections.forEach(pr -> {
+            pr.setAttributeValueList(
+                    productAttributeValueService.getProductAttributeValuesByProductId(pr.getCode())
+            );
+        });
+        return productProjections;
     }
 
 

@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/products")
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class ProductController {
         return productService.getProduct(code);
     }
     @GetMapping("/")
-    public Mono<Page<ProductProjection>> getProductProjection(@RequestParam(name = "productId") Long productId,
+    public List<ProductProjection> getProductProjection(@RequestParam(name = "productId") String productId,
                                                               @RequestParam(name = "pageNumber") Integer pageNumber,
                                                               @RequestParam(name = "pageSize") Integer pageSize){
         return productService.getProductProjection(productId, pageNumber, pageSize);
