@@ -8,6 +8,11 @@ import com.ecommerce.ecommerceapi.dto.ProductRegistrationResponseDTO;
 import com.ecommerce.ecommerceapi.entity.Product;
 import com.ecommerce.ecommerceapi.projection.ProductProjection;
 import com.ecommerce.ecommerceapi.repository.ProductRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -16,8 +21,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+//import javax.persistence.EntityManager;
+//import javax.persistence.criteria.CriteriaBuilder;
+//import javax.persistence.criteria.CriteriaQuery;
+//import javax.persistence.criteria.Predicate;
+//import javax.persistence.criteria.Root;
+//import java.util.ArrayList;
+
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +41,7 @@ public class ProductService {
     private final WebClient webClient;
     private final ProductAttributeValueService productAttributeValueService;
     private final ProductRepository productRepository;
+    private final EntityManager entityManager;
 
     public Mono<ProductRegistrationResponseDTO> addProduct(ProductRegistrationRequestDTO productRegistrationRequestDTO, String request) {
         /* first store all product attribute values in db */
@@ -84,5 +100,44 @@ public class ProductService {
         return productProjections;
     }
 
+
+
+    /*
+    *  to avoid a large number of if-else statements for constructing the query dynamically,
+    *  you can use the Criteria API provided by JPA. The Criteria API allows you to build
+    *  queries programmatically using a fluent and type-safe approach. Here's an example of
+    *  how you can use the Criteria API to handle the scenario with optional filter parameters:
+    *
+    * */
+    public List<Product> getProductsByFilters(List<String> languages, List<String> versions, List<LocalDate> dates, int page, int pageSize) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Product> query = criteriaBuilder.createQuery(Product.class);
+        Root<Product> root = query.from(Product.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (languages != null && !languages.isEmpty()) {
+            predicates.add(root.get("language").in(languages));
+        }
+        if (versions != null && !versions.isEmpty()) {
+            predicates.add(root.get("version").in(versions));
+        }
+        if (dates != null && !dates.isEmpty()) {
+            predicates.add(root.get("date").in(dates));
+        }
+        /*
+        * The predicates.toArray(new Predicate[0]) part converts the list of
+        * predicates into an array of Predicate objects. The toArray method is
+        * called on the predicates list, and it takes an empty array of Predicate
+        * as an argument. This is done to ensure that the resulting array has the correct type.
+        * */
+        query.where(predicates.toArray(new Predicate[0]));
+
+        // Apply pagination
+        int offset = (page - 1) * pageSize;
+        entityManager.createQuery(query)
+                .setFirstResult(offset)
+                .setMaxResults(pageSize);
+        return entityManager.createQuery(query).getResultList();
+    }
 
 }

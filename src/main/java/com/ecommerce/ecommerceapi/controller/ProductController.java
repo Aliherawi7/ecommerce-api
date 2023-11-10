@@ -1,9 +1,11 @@
 package com.ecommerce.ecommerceapi.controller;
 
 
+import com.ecommerce.ecommerceapi.dto.ProductFiltersDTO;
 import com.ecommerce.ecommerceapi.dto.ProductInfoDTO;
 import com.ecommerce.ecommerceapi.dto.ProductRegistrationRequestDTO;
 import com.ecommerce.ecommerceapi.dto.ProductRegistrationResponseDTO;
+import com.ecommerce.ecommerceapi.entity.Product;
 import com.ecommerce.ecommerceapi.projection.ProductProjection;
 import com.ecommerce.ecommerceapi.service.ProductAttributeValueService;
 import com.ecommerce.ecommerceapi.service.ProductService;
@@ -36,6 +38,17 @@ public class ProductController {
                                                               @RequestParam(name = "pageNumber") Integer pageNumber,
                                                               @RequestParam(name = "pageSize") Integer pageSize){
         return productService.getProductProjection(productId, pageNumber, pageSize);
+    }
+
+    @PostMapping("/filters")
+    public List<Product> getProductByFilters(@RequestBody ProductFiltersDTO productFiltersDTO){
+        return productService.getProductsByFilters(
+                productFiltersDTO.languages(),
+                productFiltersDTO.versions(),
+                productFiltersDTO.dates(),
+                productFiltersDTO.pageSize(),
+                productFiltersDTO.page()
+        );
     }
 
 

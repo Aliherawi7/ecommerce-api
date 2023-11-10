@@ -1,11 +1,7 @@
 package com.ecommerce.ecommerceapi.projection;
 
-import com.ecommerce.ecommerceapi.dto.ProductAttribute;
 import com.ecommerce.ecommerceapi.entity.ProductAttributeValue;
-import com.ecommerce.ecommerceapi.service.ProductAttributeValueService;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
