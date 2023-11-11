@@ -1,14 +1,13 @@
 package com.ecommerce.ecommerceapi.service;
 
 import com.ecommerce.ecommerceapi.constant.APIEndpoints;
-import com.ecommerce.ecommerceapi.dto.ProductAttributeValueResponseDTO;
-import com.ecommerce.ecommerceapi.dto.ProductInfoDTO;
-import com.ecommerce.ecommerceapi.dto.ProductRegistrationRequestDTO;
-import com.ecommerce.ecommerceapi.dto.ProductRegistrationResponseDTO;
+import com.ecommerce.ecommerceapi.dto.*;
 import com.ecommerce.ecommerceapi.entity.Product;
+import com.ecommerce.ecommerceapi.projection.BookProjection;
 import com.ecommerce.ecommerceapi.projection.ProductProjection;
 import com.ecommerce.ecommerceapi.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -140,4 +139,41 @@ public class ProductService {
         return entityManager.createQuery(query).getResultList();
     }
 
+    public List<BookProjection> getProductProjectionsFilters(List<String> languages, List<String> versions, List<DateRangeDTO> dateRanges ){
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("SELECT b.bookId AS bookId, b.title AS title, b.author AS author, b.date AS date ");
+            queryBuilder.append("FROM Book b ");
+            queryBuilder.append("JOIN b.language l ");
+            queryBuilder.append("JOIN b.version v ");
+            queryBuilder.append("JOIN b.bookDates bd ");
+            queryBuilder.append("WHERE l.languageName IN (:languages) ");
+            queryBuilder.append("AND v.versionName IN (:versions) ");
+
+            if (dateRanges != null && !dateRanges.isEmpty()) {
+                queryBuilder.append("AND (");
+
+                for (int i = 0; i < dateRanges.size(); i++) {
+                    queryBuilder.append("(bd.startDate >= :startDate").append(i).append(" AND bd.endDate <= :endDate").append(i).append(")");
+
+                    if (i < dateRanges.size() - 1) {
+                        queryBuilder.append(" OR ");
+                    }
+                }
+                queryBuilder.append(")");
+            }
+
+            TypedQuery<BookProjection> query = entityManager.createQuery(queryBuilder.toString(), BookProjection.class);
+            query.setParameter("languages", languages);
+            query.setParameter("versions", versions);
+
+            if (dateRanges != null && !dateRanges.isEmpty()) {
+                for (int i = 0; i < dateRanges.size(); i++) {
+                    DateRangeDTO dateRange = dateRanges.get(i);
+                    query.setParameter("startDate" + i, dateRange.startDate());
+                    query.setParameter("endDate" + i, dateRange.endDate());
+                }
+            }
+
+            return query.getResultList();
+    }
 }
