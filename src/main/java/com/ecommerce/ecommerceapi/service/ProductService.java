@@ -3,9 +3,11 @@ package com.ecommerce.ecommerceapi.service;
 import com.ecommerce.ecommerceapi.constant.APIEndpoints;
 import com.ecommerce.ecommerceapi.dto.*;
 import com.ecommerce.ecommerceapi.entity.Product;
+import com.ecommerce.ecommerceapi.exception.ResourceNotFoundException;
 import com.ecommerce.ecommerceapi.projection.BookProjection;
 import com.ecommerce.ecommerceapi.projection.ProductProjection;
 import com.ecommerce.ecommerceapi.repository.ProductRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -14,15 +16,22 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.lang.invoke.MethodType;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 //import javax.persistence.EntityManager;
 //import javax.persistence.criteria.CriteriaBuilder;
 //import javax.persistence.criteria.CriteriaQuery;
@@ -41,6 +50,7 @@ public class ProductService {
     private final ProductAttributeValueService productAttributeValueService;
     private final ProductRepository productRepository;
     private final EntityManager entityManager;
+    private final OkHttpClient okHttpClient;
 
     public Mono<ProductRegistrationResponseDTO> addProduct(ProductRegistrationRequestDTO productRegistrationRequestDTO, String request) {
         /* first store all product attribute values in db */
@@ -175,5 +185,31 @@ public class ProductService {
             }
 
             return query.getResultList();
+    }
+
+
+    /*
+    * using OKHttp3 library as http request and response handler and API Calls
+    * */
+
+    public ProductInfoDTO getProductFromSyliusByProductCode(String productCode){
+        Request request = new Request.Builder()
+                .url(APIEndpoints.BASE_URL + APIEndpoints.PRODUCT_INFO + productCode)
+                .get()
+                .build();
+        log.info(request.url().toString());
+
+        try(Response response = okHttpClient.newCall(request).execute()) {
+            ResponseBody responseBody = response.body();
+            if(response.isSuccessful()){
+                ObjectMapper mapper = new ObjectMapper();
+                assert responseBody != null;
+                return mapper.readValue(responseBody.string(), ProductInfoDTO.class);
+            }else {
+                throw new ResourceNotFoundException("product not found with code: "+productCode);
+            }
+        }catch (Exception ex){
+            throw new ResourceNotFoundException(ex.getMessage());
+        }
     }
 }

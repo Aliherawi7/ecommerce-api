@@ -51,6 +51,11 @@ public class ProductController {
         );
     }
 
+    @GetMapping("/okhttp/{code}")
+    public ProductInfoDTO getProductByOkHttp(@PathVariable String code){
+        return productService.getProductFromSyliusByProductCode(code);
+    }
+
 
 
 }

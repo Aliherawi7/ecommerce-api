@@ -5,7 +5,7 @@ public class APIEndpoints {
     }
 
 
-    public final static String BASE_URL = "https://master.demo.sylius.com/";
+    public final static String BASE_URL = "https://master.demo.sylius.com";
 
     /* Customer Endpoints*/
     public final static String SHOP_CUSTOMERS = "/api/v2/shop/customers";

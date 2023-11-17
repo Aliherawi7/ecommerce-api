@@ -1,6 +1,7 @@
 package com.ecommerce.ecommerceapi.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class ProductInfoDTO {
     private String mainTaxon;
     private List<String> reviews;
     private Double averageRating;
+    @JsonIgnore
     private List<ProductImage> images;
     private String code;
     private List<String> variants;
